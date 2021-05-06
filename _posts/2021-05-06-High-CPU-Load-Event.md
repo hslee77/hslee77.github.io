@@ -24,7 +24,7 @@ Aug 13 10:30:16 crmd[482]:   notice: throttle_handle_load: High CPU load detecte
 작업을 조절하고 있음을 나타내는 이벤트로 시스템의 Load가 높아져
 throttle_mode가 high가될경우 Delay가 발생해 Timeout으로 인한 Fail Over가 발생할수 있습니다. 
 
-``````javascript
+```javascript
 throttle_get_total_job_limit(int l)
 {
     /* Cluster-wide limit */
@@ -54,11 +54,11 @@ throttle_get_total_job_limit(int l)
         }
     }
 
-``````````
+```
 
 pacemaker에서 throttle_mode (high,medium,low)에 대한 Load에 대한 계산방식은 아래와 같습니다. 
 
-``````````javascript
+```javascript
 static enum throttle_state_e
 throttle_handle_load(float load, const char *desc, int cores)
 {
@@ -81,15 +81,15 @@ throttle_handle_load(float load, const char *desc, int cores)
     return throttle_check_thresholds(load, desc, thresholds);
 }
 #endif
+```
+[참조코드]: https://github.com/ClusterLabs/pacemaker/blob/master/daemons/controld/controld_throttle.c
 
-[참조코드]: pacemaker github https://github.com/ClusterLabs/pacemaker/blob/master/daemons/controld/controld_throttle.c
-``````````
 
 이전 코드에서는 throttle_load_target 값에 load-threshold를 100을 기준으로 나눴을때 default load를 산정했으나 변경된 code에서는 core당 산정해 놓은 Normalized 기준을 곱해서 Threadholds에 대한 FACTOR를 산정하는 방식으로 변경된것 같습니다. 
 
 pacemaker 명령어를 이용해서 load-threshold 값을 확인할수 있는데 평균적으로 1분이상 80% 이상 유지하게 되면 시스템에 Load가 있는것으로 판단하고 THROTTLE_FACTOR_HIGH 값을 초과시 High CPU throttling에 걸리게 됨으로 시스템에 부하를 주는 근본적인 원인을 찾는것이 중요합니다. 
 
-``````javascript
+```javascript
 # pcs property show --all | grep threshold
 load-threshod: 80%
-```````
+```
