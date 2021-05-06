@@ -78,8 +78,7 @@ throttle_handle_load(float load, const char *desc, int cores)
 }
 #endif
 ```
-[Pacemaker code 참고] (https://github.com/ClusterLabs/pacemaker/blob/master/daemons/controld/controld_throttle.c)
-
+[Pacemaker code 참고] [controld_throttle] 
 
 이전 코드에서는 throttle_load_target 값에 load-threshold를 100을 기준으로 나눴을때 default load를 산정했으나 변경된 code에서는 core당 산정해 놓은 Normalized 기준을 곱해서 Threadholds에 대한 FACTOR를 산정하는 방식으로 변경된것 같습니다. 
 
@@ -91,3 +90,5 @@ pacemaker 명령어를 이용해서 load-threshold 값을 확인할수 있는데
 # pcs property show --all | grep threshold
 load-threshod: 80%
 ```
+
+[controld_throttle]: https://github.com/ClusterLabs/pacemaker/blob/master/daemons/controld/controld_throttle.c
