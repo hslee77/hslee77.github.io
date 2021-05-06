@@ -24,7 +24,7 @@ Aug 13 10:30:16 crmd[482]:   notice: throttle_handle_load: High CPU load detecte
 작업을 조절하고 있음을 나타내는 이벤트로 시스템의 Load가 높아져
 throttle_mode가 high가될경우 Delay가 발생해 Timeout으로 인한 Fail Over가 발생할수 있습니다. 
 
-``````C
+``````javascript
 throttle_get_total_job_limit(int l)
 {
     /* Cluster-wide limit */
@@ -58,7 +58,7 @@ throttle_get_total_job_limit(int l)
 
 pacemaker에서 throttle_mode (high,medium,low)에 대한 Load에 대한 계산방식은 아래와 같습니다. 
 
-``````````C
+``````````javascript
 static enum throttle_state_e
 throttle_handle_load(float load, const char *desc, int cores)
 {
