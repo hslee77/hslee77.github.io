@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "History of 한국리눅스 사용자 그룹"
+title:  "History of Korea Linux User Group"
 date:   2021-05-07 01:18:20 +0530
 categories: Linux
 ---
@@ -22,7 +22,7 @@ categories: Linux
 
 **_난공불락 리눅스_** 라는 브랜드가 오라클 리눅스에서 시작은 했을지 모르겠으나 구글에서 난공불락 리눅스라고 검색하면 이제는 한국 리눅스 사용자 그룹이 더 많이 검색될 정도로 대표적인 커뮤니티 브랜드가 된것 같아서 Founder로서 기분이 좋은건 어쩔수 없네요..:) 
 
-![screenshot](/img/linuxseminar/nangong.png)
+![screenshot](/img/linuxseminar/nangong.PNG)
 
 ### 지나온 시간들 <br/>
 사실 커뮤니티라는게 그렇습니다 기여(Contribution)하고 공유(share)하는 문화라고는 하지만 그게 어디 말처럼 쉬운일은 아니지요 9년이라는 시간동안 참 많은 분들이 도와주셨고 함께 해주셨습니다, **_한빛미디어, RedHat,IBM,Intel,Microsoft,Oracle,canonical,NBP,글루시스,ISBC_** 등 많은 기업에서 후원해 주셨습니다.  
@@ -39,13 +39,12 @@ categories: Linux
 |2회|2015-09-19| 오픈소스 인프라 세미나 with 자비량 |
 |1회|2014-04-19| 오픈소스 인프라 세미나 with 한빛미디어| 
 <br/>
-<br/>
 
 ### 그리고 추억들..
 또한 오픈소스를 좋아하는 많은 엔지니어분들의 참여가 있었습니다 커뮤니티의 힘은 참여라는 말을 절실하게 깨달고 함께 해주셨던 모든 분들에게 감사함을 넘어서 소중함으로 간직되는 매순간 이었음을 말할수 있을것 같습니다.
 <br/>
 
-![screenshot](/img/linuxseminar/history.png)
+![screenshot](/img/linuxseminar/history.PNG)
 
 ---
 <br/>
