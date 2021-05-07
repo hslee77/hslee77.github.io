@@ -7,13 +7,12 @@ categories: Linux,cloud
  
 Linux에서 세그먼테이션 오류 (segfault) 또는 액세스 위반은 운영 체제 (OS)에 **메모리 액세스 위반**을 알리기 위해 메모리 보호 기능이있는 하드웨어에서 발생하는 오류입니다.  
 
+## Segfaul의 유형은?? 
 리눅스 커널은 문제가 발생하기 되면 일반적으로 프로세스 11번과 같은 신호를 보내서 문제의 프로세스에 결함이 있음을 전달함으로써 이러한 문제에 대응하게 됩니다.  
 
 일부의 경우에는 사용자가 직접 문제의 프로세스가 발생했을 경우 이러한 signal을 수신하고 처리 할수 있도록 customer handler를 설치하여 사용하는 경우도 있으나.  
 
 그렇지 않을 경우에는 Linux의 커널에서 동작하고 있는 **process signal** 처리기를 사용할수 있습니다.segfault는 일반적으로 프로세스를 종료하고 적절한 ulimit 설정을 갖춘 코어 덤프를 생성합니다.
-
-## Segfaul의 유형은?? 
 
 ```javascript
 kernel: login[118125]: segfault at 0 ip 00007f4e4d5334a8 sp 00007fffe9177d60 error 15 in pam_unity_uac.so[7f4e4d530000+b000]
