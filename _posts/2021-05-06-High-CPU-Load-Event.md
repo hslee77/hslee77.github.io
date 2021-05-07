@@ -2,7 +2,7 @@
 layout: post
 title:  "Pacemaker High CPU Load Detected Event 발생"
 date:   2021-05-07 00:13:36 +0530
-categories: Linux Pacemaker,Azure cloud
+categories: Linux Pacemaker,cloud
 ---
  
 Pacemaker가 구성되어 있는 Linux 시스템에서 아래와 같이 Message 로그에 High CPU load detected 메세지가 지속적으로 발생하는 경우가 있습니다 
@@ -80,7 +80,7 @@ throttle_handle_load(float load, const char *desc, int cores)
 ```
 [Pacemaker code 참고] [controld_throttle] 
 
-이전 코드에서는 throttle_load_target 값에 load-threshold를 100을 기준으로 나눴을때 default load를 산정했으나 변경된 code에서는 core당 산정해 놓은 Normalized 기준을 곱해서 Threadholds에 대한 FACTOR를 산정하는 방식으로 변경된것 같습니다. 
+이전 코드에서는 throttle_load_target 값에 load-threshold를 100을 기준으로 나눴을때 default load를 산정했으나 변경된 code에서는 core당 산정해 놓은 Normalized 기준을 곱해서 Threshold에 대한 FACTOR를 산정하는 방식으로 변경된것 같습니다. 
 
 pacemaker 명령어를 이용해서 load-threshold 값을 확인할수 있는데 평균적으로 1분이상 80% 이상 유지하게 되면 시스템에 Load가 있는것으로 판단하고 THROTTLE_FACTOR_HIGH 값을 초과시 High CPU throttling에 걸리게 됨으로 시스템에 부하를 주는 근본적인 원인을 찾는것이 중요합니다. 
 
