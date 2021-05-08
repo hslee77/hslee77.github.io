@@ -83,15 +83,8 @@ Procs
 
 - VM의 Size 보다 Throttling이 높게 나타나게 되면 VMSS를 확장하거나 VM size를 더 큰것으로 업그레이는 하는 방안을 고려할수 있습니다. 
 
-- 성능과 관련된 Azure 문서의 Article을 참고하세요 
-
-```
-[AzureLinuxPerformance][azurelinuxperformance]
-[AzureWindowPerfornace][azurewinperformance]
-```
-
-
-
+- [AzureLinuxPerformance][azurelinuxperformance] Azure 클라우에서 Linux 성능모니터링
+- [AzureWindowPerfornace][azurewinperformance] Azure 클라우에서 Windows 성능모니터링
 
 
 [linuxperformance]: http://www.brendangregg.com/Perf/linux_observability_tools.png
