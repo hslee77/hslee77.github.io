@@ -2,16 +2,12 @@
 layout: post
 title:  "vmstat 명령어를 무시하지 마세요!"
 date:   2021-05-07 10:45:20 +0530
-categories: Linux Pacemaker,cloud
+categories: Linux performance,cloud
 ---
  
 리눅스 시스템에 대한 성능을 측청하는데 있어서, 별도의 sms 툴을 사용하는 것도 좋은 방법이되기도 하겠지만 Linux에서 제공해주는 명령어들만 가지고도 충분히 Linux Performance에 대한 이해를 높일수 있습니다.
 
-<p align="center">
-
 ![screenshot](/img/linuxtech/linuxperformance.png)
-
-</p>
 
 [출처:Brendan Gregg][linuxperformance]
 
