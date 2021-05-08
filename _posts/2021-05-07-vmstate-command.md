@@ -9,11 +9,13 @@ categories: Linux performance,cloud
 
 ![screenshot](/img/linuxtech/linuxperformance.png)
 
-[출처:Brendan Gregg][linuxperformance]
+[출처:Brendan Gregg][linuxperformance] 
 
 전체 하드웨어의 동작을 이해하고, CPU부터 Memory 그리고 Disk I/O에 대한 항목들을 이해한다면, 생각보다 상세한 시스템 Linux 시스템 성능에 대한 자세한 Mesurement가 가능하리라 생각됩니다, 특히 툴이 제공하는 모니터링의 Obseravaility의 scope이 어디까지인지 이해하고 있다면 단순하게 보여졌던 명령어에 또다른 면을 느끼게 될것입니다.
 
 ## vmstat는 뭐하는 녀석인가? 
+
+[![brendangvmstat](https://img.youtube.com/vi/k9eX1jQR1hA/0.jpg)](https://www.youtube.com/watch?v=k9eX1jQR1hA)
 
 linux에서 vmstat 명령어는 프로세스,CPU의 동작상태,메모리,
 페이징 블록에 대한 모니터링 정보와 함께 I/O의 트랩까지 상태정보를 통해서 Linux 자체에서 발생하는 **병목(Bottleneck)증상**의 분석을 가능하게 해줍니다.
