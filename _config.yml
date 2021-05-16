@@ -1,4 +1,4 @@
-title: "Tommy Tech Journey"
+title: Tommy Tech Journey
 author: GitHub User
 email: kainos.yhs@gmail.com
 description: > # this means to ignore newlines until "show_exerpts:"
@@ -28,7 +28,7 @@ plainwhite:
   social_links:
     twitter: ssambbak
     github: hslee77
-    linkedIn: in/tommy-hosung-lee-8264861a/
+    linkedIn: in/
     #rss: rss
     #dribbble: jekyll
     #flickr:   jekyll
