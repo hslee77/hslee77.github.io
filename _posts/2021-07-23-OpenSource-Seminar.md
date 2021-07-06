@@ -21,7 +21,7 @@ categories: Linux performance,cloud
            Rocky Linux
 
 세미나 아젠다는 아래와 같습니다 
-- 16:00 ~ 16:00 Korea Linux User Group 키노트 
+- 16:00 ~ 16:00 세션노트(KLUG)
 - 16:15 ~ 15:55 SUSE Linux 
 - 17:05 ~ 17:45 Harshcorp
 - 17:55 ~ 18:45 Rocky Linux Roadmap
