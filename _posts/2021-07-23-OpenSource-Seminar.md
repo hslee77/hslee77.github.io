@@ -30,7 +30,7 @@ categories: Linux performance,cloud
 
 특히 이번 난공불락 9회 세미나에도 많은 분들께서 참여해 주셨는데 특히 눈여겨 볼것은 본격적으로 한국에서 지사를 설집하고 비지니스를 시작하게된 **SUSE Linux Korea**의 이야기르 직접 들어볼수 있는 시간이 준비되어있으며 최근들어 오픈소스 클라우드 인프라 스트럭쳐의 강자로 떠오르고 있는 **HarshCorp**의 이야기를 들어볼수 있는 시간을 마련했습니다. 
 
-![screenshot](/img/linuxseminar/support.png)
+![screenshot](/img/linuxseminar/support.PNG)
 
 특히 주목할만한 것은 이번 9회 세미나에는 CentOS 개발중단 이후에 가장만은 관심을 받고 있는 **Rocky Linux팀의 Global Staff가** 직접 참여하여 Rocky Linux에 대한 개발 로드맵과 방향성 그리고 Migration등에 대한 이야기들을 들어볼수 있는 자리를 마련했습니다. 또한 Q&A 시간을 별도로 마련하여 직접 궁금한 사항을 들어볼수 있는 시간도 마련했습니다. 
 
