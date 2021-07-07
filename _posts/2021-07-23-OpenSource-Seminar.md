@@ -41,7 +41,7 @@ categories: Linux, 9th Seminar
 - [제9회 난공불락 인프라세미나 참석신청][gotowebinar]
 
 ## 추첨을 통해서 
-추첨을 통해서 **Hashicorp Certificate Voucher**를 제공해 드리도록 하겠습니다 열심히 공부해서 이력서를 빛낼수 있는 자격증을 취득해 보아요.!!
+ 참석하신 분께 **Hashicorp Certificate Voucher**를 제공해 드리도록 하겠습니다 열심히 공부해서 이력서를 빛낼수 있는 자격증을 취득해 보아요.!!
 
 
 ![screenshot](/img/linuxseminar/hashicorp.jpg)
