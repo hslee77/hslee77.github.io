@@ -20,9 +20,9 @@ categories: Linux, 9th Seminar
 - **후원사 : Naver Cloud, SUSE Korea, Hashicorp,Rocky Linux**
 
 세미나 아젠다는 아래와 같습니다 
-- **16:00 ~ 16:15 세션 키노트(KLUG)**
-- **16:15 ~ 15:55 SUSE Korea / 오픈소스 시스템 매니지먼트 소개** 
-- **17:05 ~ 17:45 Harshicorp / "OOO은 끝났다**
+- **16:00 ~ 16:15 세션 키노트(KLUG) / 난공불락이 걸어온길 / 이호성 매니저**
+- **16:15 ~ 15:55 SUSE Korea / 오픈소스 시스템 매니지먼트 소개 / 최기원 부장** 
+- **17:05 ~ 17:45 Harshicorp / "OOO은 끝났다" / 이규석 기술이사**
 - **17:55 ~ 18:45 Future of Rocky Linux**
 
 특히 이번 난공불락 9회 세미나에도 많은 분들께서 참여해 주셨는데 특히 눈여겨 볼것은 본격적으로 한국에서 지사를 설립하고 비지니스를 시작하게된 **SUSE Linux Korea**의 이야기를 직접 들어볼수 있는 시간이 준비되어있으며 최근들어 오픈소스 클라우드 인프라 스트럭쳐의 강자로 떠오르고 있는 **HashiCorp**의 전략을 함께 들어볼수 있는 시간을 마련했습니다. 
@@ -41,7 +41,7 @@ categories: Linux, 9th Seminar
 - [제9회 난공불락 인프라세미나 참석신청][gotowebinar]
 
 ## 추첨을 통해서 
-추첨을 통해서 **Hashicorp Certificate** 바우처를 제공해 드리도록 하겠습니다 열심히 공부해서 이력서를 빛낼수 있는 자격증을 취득해 보아요...
+추첨을 통해서 **Hashicorp Certificate Voucher**를 제공해 드리도록 하겠습니다 열심히 공부해서 이력서를 빛낼수 있는 자격증을 취득해 보아요...
 
 ![screenshot](/img/linuxseminar/hashvaucher.jpeg)
 
