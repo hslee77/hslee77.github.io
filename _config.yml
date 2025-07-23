@@ -55,10 +55,8 @@ plainwhite:
 
 # Build settings
 #theme: jekyll-theme-cayman
-remote_theme: vinitkumar/plainwhite-jekyll
+remote_theme: pages-themes/minimal@v0.2.0
 
 plugins:
-  - jekyll-seo-tag
   - jekyll-remote-theme
-  - jekyll-paginate
 #  - jekyll-feed
