@@ -59,4 +59,6 @@ remote_theme: vinitkumar/plainwhite-jekyll
 
 plugins:
   - jekyll-seo-tag
+  - jekyll-remote-theme
+  - jekyll-paginate
 #  - jekyll-feed
