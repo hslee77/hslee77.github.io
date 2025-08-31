@@ -7,6 +7,7 @@ categories: [Linux, System]
 
 - [1. CIQ Depot Client](#1-ciq-depot-client)
 - [2. Rsync를 사용하여 CIQ 저장소 미러링](#2-rsync를-사용하여-ciq-저장소-미러링)
+- [3. Reposync를 이용한 CIQ 저장소 미러링](#3-reposync를-이용한-ciq-저장소-미러링)
 
 ### 1. CIQ Depot Client
 
@@ -108,3 +109,119 @@ categories: [Linux, System]
 >* 만약 제품 Repsository에 Rsync URI 옵션이 포함되어 있지 않다면 rsync 미러링이 활성화 되어 있지 않았을 가능성이 있음.
 >* 제품 Repository가 reposync를 지원하는지 확인 
 >* CIQ 서포트를 통해서 지원을 받아야함 (support@ciq.com)
+
+### 3. Reposync를 이용한 CIQ 저장소 미러링
+
+* reposync는 원격 저장소를 로컬 복사본으로 생성하는 DNF 유틸리티
+* reposync를 구성하고 CIQ 저장소를 로컬로 미러링 하는 방법을 사용을 제공
+
+
+> **1.reposync 동작 방식**
+
+> * reposync 명령어는 다음과 같은 기능을 수행합니다:
+> *원격 저장소의 로컬 복사본을 생성
+> *로컬 디렉토리에 이미 존재하는 패키지는 다시 다운로드하지 않음
+> *모든 활성화된 저장소 또는 특정 저장소만 동기화 가능
+> * **--repo, --enable-repo, --disable-repo** 와 같은 표준 DNF 옵션 지원
+>
+> **2.reposync 설정하기**
+> **1. 리포지토리 설정 파일 생성**
+>
+> * CIQ 포털에서 My Products로 이동
+> * 미러링하려는 리포지토리가 포함된 제품을 클릭
+> * 해당 리포지토리를 클릭하여 상세 정보 열기
+> * DNF Repo Config 옵션을 찾아 클릭
+> * 제공된 설정 내용을 복사
+> * /etc/yum.repos.d/ 디렉토리에 설명이 담긴 이름(예: ciq-bridge.repo)으로 새 파일 생성
+복사한 설정 내용을 해당 파일에 붙여 넣고 저장
+>
+> * 리포터리 설정 파일 예제 (Example)
+```bash
+[ciq-bridge.x86_64]
+name = CentOS 7.9 CIQ Bridge Updates (x86_64)
+baseurl = https://depot.ciq.com/files/bridge/ciq-bridge.x86_64
+gpgkey = https://ciq.com/keys/rpm-gpg-key-ciq
+username = DEPOT_USER
+password = DEPOT_TOKEN
+metadata_expire = 5
+priority = 50
+repo_gpgcheck = false
+gpgcheck = true
+enabled = true
+skip_if_unavailable = true
+```
+**주요 항목 설명**
+>
+> * **[ciq-bridge.x86_64]** : 리포지토리의 ID (고유 식별자)
+> * **name** : 리포지토리 이름 (사람이 읽기 쉽게 표시됨)
+> * **baseurl** : 패키지를 다운로드할 원격 저장소 URL
+> * **gpgkey** : 패키지 검증에 사용할 GPG 키 위치
+> * **username** / password : 인증을 위한 사용자 이름과 토큰(DEPOT 포털에서 제공)
+> * **metadata_expire** : 메타데이터 캐시 만료 시간 (단위: 분, 초 등 상황에 따라 다름)
+> * **priority** : 저장소 우선순위 (낮을수록 높은 우선순위)
+> * **repo_gpgcheck** : 리포지토리 메타데이터 서명 검증 여부 (false = 비활성화)
+> * **gpgcheck** : 패키지 서명 검증 여부 (true = 활성화)
+> * **enabled** : 리포지토리 사용 여부 (true = 활성화)
+> * **skip_if_unavailable** : 리포지토리에 접근할 수 없을 때 건너뛸지 여부
+
+> 2. **인증 설정 (Configure Authentication)**
+>
+> * DEPOT_USER와 DEPOT_TOKEN 값을 포털의 Access Token 페이지에서 발급받은 실제 자격 증명으로 교체.
+대체 인증 방법: 자격 증명을 baseurl에 직접 포함할 수도 있다.
+```bash
+baseurl = https://DEPOT_USER:DEPOT_TOKEN@depot.ciq.com/files/bridge/ciq-bridge.x86_64
+```
+> * 여러 리포지토리를 동시에 동기화할 때 유용gka
+>
+> **3. reposync 실행 (Run reposync)**
+> * 설정 파일이 준비되면 아래 명령어로 리포지토리를 동기화합니다:
+```bash
+dnf reposync --repoid=ciq-bridge.x86_64 --download-metadata --download-path=/var/www/html/repos/
+```
+> * ciq-bridge.x86_64 → repo 파일에서 정의된 리포지토리 ID로 교체
+> * /var/www/html/repos/ → 원하는 저장 경로로 교체
+>
+> **고급 옵션 (Advanced Options)**
+>
+> * 1) 다중 리포지토리 동기화 (Syncing Multiple Repositories)
+> * 모든 활성화된 리포지토리를 동기화하려면:
+```bash
+dnf reposync --download-metadata --download-path=/var/www/html/repos/
+```
+> 2) 리포지토리 메타데이터 생성 (Creating Repository Metadata)
+> 동기화 후 메타데이터를 생성해야 할 수 있다.
+```bash
+createrepo_c /var/www/html/repos/ciq-bridge.x86_64/
+```
+> 3) 정기 동기화 스케줄링 (Scheduling Regular Syncs)
+미러를 최신 상태로 유지하려면 cron을 사용해 스케줄링합니다.
+
+> **동기화 스크립트 작성:**
+```bash
+#!/bin/bash
+dnf reposync --repoid=ciq-bridge.x86_64 --download-metadata --download-path=/var/www/html/repos/ >> /var/log/reposync.log 2>&1
+createrepo_c --update /var/www/html/repos/ciq-bridge.x86_64/
+```
+> **크론 작업에 등록 (매일 새벽 2시 실행):**
+```bash
+0 2 * * * /path/to/your/reposync-script.sh
+```
+> ### 문제 해결 (Troubleshooting)
+>
+> **일반적인 문제 및 해결 방법**
+>
+> * **인증 오류 (Authentication Errors)**: repo 설정 파일에서 자격 증명이 올바른지 확인
+> * **패키지 누락 (Missing Packages)**: 리포지토리가 올바르게 활성화되어 있는지 확인
+> **권한 거부 (Permission Denied)**: 대상 디렉토리에 쓰기 권한이 있는지 확인
+>
+> ### 다음 단계 (Next Steps)
+>
+> 로컬 미러를 생성한 후 추가적으로 필요한 작업:
+> * 웹 서버를 설정하여 리포지토리를 제공
+> * 시스템을 업데이트하여 로컬 미러를 사용하도록 구성
+> * 정기 동기화 스케줄을 설정하여 최신 상태 유지
+>
+### 추가 지원 (Additional Assistance)
+>
+> * 추가 지원이 필요할 경우, CIQ 지원팀에 문의하십시오:
+> **[support@ciq.com](mailto:support@ciq.com)**
