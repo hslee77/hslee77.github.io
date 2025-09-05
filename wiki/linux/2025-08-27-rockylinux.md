@@ -8,6 +8,8 @@ categories: [Linux, System]
 - [1. CIQ Depot Client](#1-ciq-depot-client)
 - [2. Rsync를 사용하여 CIQ 저장소 미러링](#2-rsync를-사용하여-ciq-저장소-미러링)
 - [3. Reposync를 이용한 CIQ 저장소 미러링](#3-reposync를-이용한-ciq-저장소-미러링)
+- [4. CIQ Bridge Setup](#4-ciq-bridge-setup)
+
 
 ### 1. CIQ Depot Client
 
@@ -225,3 +227,25 @@ createrepo_c --update /var/www/html/repos/ciq-bridge.x86_64/
 >
 > * 추가 지원이 필요할 경우, CIQ 지원팀에 문의하십시오:
 > **[support@ciq.com](mailto:support@ciq.com)**
+
+### 4. CIQ Bridge Setup
+
+* 여러 호스트에 CIQ Bridge를 설정하려면 CIQ Support팀에 문의해야함
+* CIQ Depot에 등록 시스템에 액세스 할수 있는 모든 사용자에 대한 **토큰**을 받아야함.
+* CIQ Support 또는 영업팀에서 얻은 토큰을 사용하면 CentOS 7 x86_64 시스템에서 5단계로 브릿지를 설정할수 있음. 
+
+> **Bridge Setup Quickstart:**
+> ```bash
+> yum install -y https://depot.ciq.com/public/files/depot-client/depot/depot.x86_64.rpm
+> .. 
+> depot -l login -u [USER_STRING] -t [USER_TOKEN]
+> Enrolled to https://depot.ciq.com
+> .. 
+> depot enable bridge 
+> Create DNF configuration: /etc/yum.repos.d/depot-bridge.repo
+> ..
+> yum-config-manager --disabled base updates extras os 
+> ..
+> yum -y update 
+>```
+
