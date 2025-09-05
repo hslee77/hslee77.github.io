@@ -13,7 +13,7 @@ sass:
   sass_dir: _sass
 plainwhite:
   name: Tommy HoSung.Yi
-  tagline: 헝그리 짬타이거
+  tagline: 아보카도 3호기
   date_format: "%b %-d, %Y"
   sitemap: true # set to true to generate sitemap.xml content
   search: true # set to true to enable searchbar
