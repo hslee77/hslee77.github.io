@@ -20,16 +20,16 @@ categories: [Linux, Performance]
 
 사용된 기술 — AVX-512, VNNI, oneDNN, 프로파일링 툴
 
-## Netflix가 도입하여 효과를 본 주요 기술들:
+## 2.1 Netflix가 도입하여 효과를 본 주요 기술들:
 - AVX-512 + VNNI (Vector Neural Network Instructions):
 AVX-512: 512-bit 벡터 명령을 통한 데이터 병렬 처리. CPU만으로 높은 처리량을 요구하는 작업(video encoding, 데이터 처리, ML inference 등)을 가속. 
 
 - VNNI: 특히 딥러닝 inference, 행렬 연산, convolution 등에 유리하도록 설계된 명령 세트. Netflix는 ML 인퍼런스를 GPU가 아닌 Intel CPU + VNNI 로 돌리는 게 “비용 효율 + 실용성” 측면에서 낫다고 판단. 
 
-## oneDNN (Intel’s Deep Neural Network library):
+## 2.2 oneDNN (Intel’s Deep Neural Network library):
 video 인코딩 파이프라인 — 특히 FFmpeg 같은 워크로드에 적용할 때, oneDNN을 사용하여 15% 성능 향상에서부터 “최대 2×” 속도 향상까지 본 사례가 있다고 보고됨. 이로 인해, 거대한 비디오 라이브러리를 매년 인코딩하고 재인코딩하는 Netflix 입장에서 “클라우드 CPU 시간 절약 → 비용 절감” 효과가 큼. 
 
-## 프로파일링 & 분석 도구:
+## 2.3 프로파일링 & 분석 도구:
 
 - VTune, PerfSpect (Linux perf 래퍼), ProcessWatch, PCM 등 사용. 이들로 CPU-및 메모리 사용, 명령어 mix, cache miss, branch misprediction 등 low-level 하드웨어 이벤트를 모니터링, 분석. 
 
@@ -39,7 +39,7 @@ video 인코딩 파이프라인 — 특히 FFmpeg 같은 워크로드에 적용�
 
 ## 3. 파이프라인 최적화: 비디오 인코딩 + ML + 워크로드 처리
 
-## Netflix의 스트리밍 파이프라인에 대한 핵심 설계 및 최적화 방식:
+## 3.1 Netflix의 스트리밍 파이프라인에 대한 핵심 설계 및 최적화 방식:
 
 - 비디오 스트리밍을 위해, 원본 영상 자산을 클라우드에서 다운샘플 → 인코딩 → 전송 → 단말 디코딩 & 업스케일 방식으로 처리.  다운샘플 단계에서는 단순 보간 필터(lanczos)뿐 아니라, 신경망 기반 다운샘플러(neural-based Downsampler) 를 학습시켜 사용. 
 - 이 방식은 다양한 업샘플러(bilinear, bicubic, lanczos)에 대해 품질이 개선된 것으로 보고됨. 또한 인코더(H.264, HEVC, VP9, AV1 등)와 독립적이어서 범용성 확보. 
