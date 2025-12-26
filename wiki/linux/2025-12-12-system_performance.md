@@ -10,7 +10,7 @@ categories: [OpenSource, linux]
 
 ### 시스템 성능 엔지니어링 부록 . 
 [1. USE 방법론: 리눅스 체크리스트 (p1073) ](#1-use-방법론-리눅스)<br>
-[2. Pert Event : One Liner ](#2-perf-event--one-liner)
+[2. Pert Event : One Liner ](#2-perf-event--one-liner)<br>
 [3. State vs Status 차이점 ](#3-state-vs-status의-차이점)
 ----------------------------------------------------------------------------------------
 ### 1. 시스템 성능 엔지니어링 강독회
@@ -495,7 +495,7 @@ perf annotate --stdio
 
 ## 3. State vs Status의 차이점 
 
-# 1. Status (상태, 가용성, 서비스 레벨)
+## 1. Status (상태, 가용성, 서비스 레벨)
 성능 엔지니어링에서 Status는 주로 시스템 또는 서비스의 **외부에 공개되는 가용성 및 건강성 지표**를 의미합니다. 
 이는 사용자나 다른 시스템이 해당 서비스가 **현재 사용 가능한지, 정상적으로 작동하고 있는지**, 아니면 문제가 있는지 파악하는 데 사용됩니다.
 
