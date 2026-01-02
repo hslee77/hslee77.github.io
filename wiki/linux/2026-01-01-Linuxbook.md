@@ -211,12 +211,12 @@ ip addr show bond0
 
 ### 2. 리눅스 커널 순서 변경 
 
-- 1. 커널 순서 바꾸기 
+**1. 커널 순서 바꾸기**
 
 * 리눅스 시스템에서 커널 업데이트 이후에 새롭게 설치된 커널 버젼에 대한 확인 및 순서 변경 
 * 클라우드/온프렘 시스템 변경 작업에 있어서는 은근 손이 많이 가는 작업이기는 하다. 
 
-- 2. 부팅 가능한 커널 확인 
+**2. 부팅 가능한 커널 확인**
 
 ```bash 
 sudo grubby --info=ALL | grep ^kernel
@@ -225,7 +225,7 @@ kernel=/boot/vmlinuz-5.14.0-427.13.1.el9_4.x86_64
 kernel=/boot/vmlinuz-5.14.0-362.24.2.el9_3.x86_64
 ```
 
-- 3. Grub 설정에서 직접 추출
+**3. Grub 설정에서 직접 추출**
 * (1) BIOS 기반의 시스템에 설치된 커널 
 * (2) UFI 기반의 시스템에 설치된 커널
 
@@ -234,7 +234,7 @@ kernel=/boot/vmlinuz-5.14.0-362.24.2.el9_3.x86_64
 (2) awk -F\' '$1=="menuentry " {print $2}' /etc/grub2-efi.cfg
 ```
 
-- 4. 커널 Default 변경 및 확인
+**4. 커널 Default 변경 및 확인**
 * 커널에 대한 기본 설정 부터 grub.cfg 파일 재생성 절차 
 
 ```bash 
@@ -251,7 +251,7 @@ kernel=/boot/vmlinuz-5.14.0-362.24.2.el9_3.x86_64
 (2) sudo grubby --default-kernel
 ```
 
-- 5. 커널 변경 자동화 스크립트  
+**5. 커널 변경 자동화 스크립트**
 * BIOS/UEFI 자동 감지 → 설치된 커널 목록 출력 → 번호 선택 → 기본 부팅 커널 변경 순서로 동작
 * Rocky Linux 9(BLS 기반)에서는 grubby가 가장 안전하므로 우선 사용하고, 없으면 GRUB 메뉴 타이틀을 이용한 대안을 제공.
 * 저장: /usr/local/sbin/set-default-kernel.sh (루트로 실행)
