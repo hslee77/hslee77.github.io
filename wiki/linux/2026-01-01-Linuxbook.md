@@ -6,8 +6,8 @@ categories: [Linux, Book]
 ---
 
 [0. 머리말 : 이책을 시작하기전](#0-클라우드-시대에-리눅스를-써야되) \
-[1. 네트워킹을 시작해 보자](#1-네트워킹을-시작해-보자)
-
+[1. 네트워킹을 시작해 보자](#1-네트워킹을-시작해-보자) \
+[2. 리눅스 커널의 순서를 변경해 보자](#2-리눅스-커널-순서-변경)
 -------
 
 ### 0. 클라우드 시대에 리눅스를 써야되?
@@ -206,3 +206,182 @@ ip addr show bond0
 ```
 - 본딩 모드가 mode=4 (802.3ad)인 경우 스위치에서도 LACP를 지원하도록 구성해야 한다..
 - miimon 옵션은 네트워크 링크 상태를 확인하는 주기를 밀리초 단위로 설정한다 (기본값: 100ms)
+
+-------
+
+### 2. 리눅스 커널 순서 변경 
+
+- 1. 커널 순서 바꾸기 
+
+* 리눅스 시스템에서 커널 업데이트 이후에 새롭게 설치된 커널 버젼에 대한 확인 및 순서 변경 
+* 클라우드/온프렘 시스템 변경 작업에 있어서는 은근 손이 많이 가는 작업이기는 하다. 
+
+- 2. 부팅 가능한 커널 확인 
+
+```bash 
+sudo grubby --info=ALL | grep ^kernel
+..
+kernel=/boot/vmlinuz-5.14.0-427.13.1.el9_4.x86_64
+kernel=/boot/vmlinuz-5.14.0-362.24.2.el9_3.x86_64
+```
+
+- 3. Grub 설정에서 직접 추출
+* (1) BIOS 기반의 시스템에 설치된 커널 
+* (2) UFI 기반의 시스템에 설치된 커널
+
+```bash 
+(1) awk -F\' '$1=="menuentry " {print $2}' /etc/grub2.cfg
+(2) awk -F\' '$1=="menuentry " {print $2}' /etc/grub2-efi.cfg
+```
+
+- 4. 커널 Default 변경 및 확인
+* 커널에 대한 기본 설정 부터 grub.cfg 파일 재생성 절차 
+
+```bash 
+(1) sudo grub2-set-default 'Rocky Linux (5.14.0-427.13.1.el9_4.x86_64) 9.4 (Blue Onyx)'
+(2) sudo grub2-editenv list
+(3) sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+(4) sudo grub2-mkconfig -o /boot/efi/EFI/rocky/grub.cfg
+```
+- 5.grubby 명령을 사용한 Default 커널 변경 및 확인
+* grubby 명령을 이용한 기본 커널 설정 및 확인 방법
+
+```bash 
+(1) sudo grubby --set-default /boot/vmlinuz-5.14.0-427.13.1.el9_4.x86_64
+(2) sudo grubby --default-kernel
+```
+
+- 5. 커널 변경 자동화 스크립트  
+* BIOS/UEFI 자동 감지 → 설치된 커널 목록 출력 → 번호 선택 → 기본 부팅 커널 변경 순서로 동작
+* Rocky Linux 9(BLS 기반)에서는 grubby가 가장 안전하므로 우선 사용하고, 없으면 GRUB 메뉴 타이틀을 이용한 대안을 제공.
+* 저장: /usr/local/sbin/set-default-kernel.sh (루트로 실행)
+
+```bash 
+#!/usr/bin/env bash
+#
+# set-default-kernel.sh
+# Rocky Linux 9: Detect BIOS/UEFI -> list installed kernels -> set default kernel
+# Requires: grubby (preferred). Falls back to grub2-set-default if grubby is missing.
+
+set -euo pipefail
+
+# --- Helpers ---
+die() { echo "ERROR: $*" >&2; exit 1; }
+need_root() {
+  if [[ $EUID -ne 0 ]]; then
+    echo "[i] Root 권한이 필요합니다. sudo로 재실행합니다..."
+    exec sudo -E "$0" "$@"
+  fi
+}
+
+# --- Ensure root ---
+need_root "$@"
+
+# --- Detect firmware ---
+if [[ -d /sys/firmware/efi ]]; then
+  FW="UEFI"
+  GRUB_CFG_READ="/etc/grub2-efi.cfg"
+  GRUB_CFG_WRITE="/boot/efi/EFI/rocky/grub.cfg"
+else
+  FW="BIOS"
+  GRUB_CFG_READ="/etc/grub2.cfg"
+  GRUB_CFG_WRITE="/boot/grub2/grub.cfg"
+fi
+
+echo "[i] Firmware : $FW"
+echo "[i] GRUB cfg : read=$GRUB_CFG_READ, write=$GRUB_CFG_WRITE"
+
+HAVE_GRUBBY=0
+if command -v grubby >/dev/null 2>&1; then
+  HAVE_GRUBBY=1
+fi
+
+CURRENT_RUNNING="$(uname -r || true)"
+
+echo
+echo "===== Installed kernels ====="
+KERNELS=()        # e.g. /boot/vmlinuz-5.14.0-...
+TITLES=()         # GRUB menu titles
+
+if [[ $HAVE_GRUBBY -eq 1 ]]; then
+  # Collect from grubby (BLS-aware)
+  mapfile -t KERNELS < <(grubby --info=ALL | awk -F= '/^kernel=/{print $2}')
+  mapfile -t TITLES  < <(grubby --info=ALL | awk -F= '/^title=/{print $2}')
+  DEFAULT_KERNEL="$(grubby --default-kernel 2>/dev/null || true)"
+  DEFAULT_TITLE="$(grubby --info="$DEFAULT_KERNEL" 2>/dev/null | awk -F= '/^title=/{print $2}')"
+else
+  echo "[!] grubby가 없습니다. 가능한 경우 설치를 권장합니다: dnf install -y grubby"
+  # Fallback: parse GRUB menu entries (exclude rescue)
+  mapfile -t TITLES < <(awk -F"'" '$1=="menuentry " && $2 !~ /rescue/ {print $2}' "$GRUB_CFG_READ" 2>/dev/null || true)
+  # We won't have /boot/vmlinuz paths reliably; fill placeholders
+  for _ in "${TITLES[@]}"; do KERNELS+=("N/A-without-grubby"); done
+  DEFAULT_TITLE="$(/usr/bin/grub2-editenv list 2>/dev/null | awk -F= '$1=="saved_entry"{print $2}')"
+  DEFAULT_KERNEL=""
+fi
+
+if [[ ${#TITLES[@]} -eq 0 ]]; then
+  die "설치된 커널 목록을 찾지 못했습니다."
+fi
+
+for i in "${!TITLES[@]}"; do
+  idx=$((i+1))
+  mark=""
+  if [[ -n "${DEFAULT_TITLE:-}" && "${TITLES[$i]}" == "$DEFAULT_TITLE" ]]; then
+    mark="*default"
+  fi
+  # Try to derive version for nicer display
+  ver="${KERNELS[$i]##*/vmlinuz-}"
+  if [[ "$ver" == "${KERNELS[$i]}" || -z "$ver" ]]; then
+    # attempt from title: "Rocky Linux (5.14.0-...) ..."
+    ver="$(sed -n 's/.*(\(.*\)).*/\1/p' <<< "${TITLES[$i]}")"
+  fi
+  running_mark=""
+  if [[ -n "$CURRENT_RUNNING" && "$ver" == "$CURRENT_RUNNING" ]]; then
+    running_mark="(running)"
+  fi
+  printf "%2d) %-70s  %-28s %s\n" "$idx" "${TITLES[$i]}" "$ver" "$mark $running_mark"
+done
+
+echo
+read -rp "-> 기본 부팅으로 설정할 번호를 입력하세요: " CHOICE
+if ! [[ "$CHOICE" =~ ^[0-9]+$ ]] || (( CHOICE < 1 || CHOICE > ${#TITLES[@]} )); then
+  die "잘못된 선택입니다."
+fi
+
+SEL_INDEX=$((CHOICE-1))
+SEL_TITLE="${TITLES[$SEL_INDEX]}"
+SEL_KERNEL="${KERNELS[$SEL_INDEX]}"
+
+echo
+echo "[i] 선택된 항목:"
+echo "    Title : $SEL_TITLE"
+echo "    Kernel: ${SEL_KERNEL}"
+
+# --- Apply change ---
+if [[ $HAVE_GRUBBY -eq 1 && -n "$SEL_KERNEL" && "$SEL_KERNEL" != "N/A-without-grubby" ]]; then
+  echo "[i] grubby로 기본 커널 설정 중..."
+  grubby --set-default "$SEL_KERNEL"
+  NEW_DEFAULT="$(grubby --default-kernel || true)"
+  echo "[i] 기본 커널 -> $NEW_DEFAULT"
+else
+  echo "[i] grubby 미사용 경로: GRUB saved_entry를 타이틀로 설정합니다."
+  grub2-set-default "$SEL_TITLE"
+  # 재생성(보수적): 일부 환경에서 필요치 않을 수 있으나 안전을 위해 반영
+  if [[ -w "$GRUB_CFG_WRITE" ]]; then
+    echo "[i] grub2-mkconfig 실행 중..."
+    grub2-mkconfig -o "$GRUB_CFG_WRITE" >/dev/null
+  else
+    echo "[!] $GRUB_CFG_WRITE 쓰기가 불가하여 mkconfig를 건너뜁니다."
+  fi
+  echo "[i] 현재 saved_entry:"
+  grub2-editenv list || true
+fi
+
+echo
+echo "완료되었습니다. 재부팅 후 적용됩니다."
+echo "현재 실행 중인 커널: $CURRENT_RUNNING"
+```
+* 목록에서 번호 입력 → 해당 커널이 기본 부팅 항목으로 설정.
+* grubby가 있으면 BLS 엔트리를 안전하게 갱신하고 
+* 없을 때는 grub2-set-default로 **GRUB 저장 엔트리(saved_entry)**를 변경
+* 적용은 재부팅 후 반영.
