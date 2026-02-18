@@ -11,3 +11,11 @@
   @import "toggle";
   @import "dark";
 {%- endif -%}
+
+code {
+  background-color: #f0f2f4; /* 연한 회색 */
+  padding: 2px 5px;          /* 글자 주변 여백 */
+  border-radius: 3px;       /* 모서리 둥글게 */
+  color: #333;               /* 글자색을 진하게 */
+  font-family: inherit;      /* 폰트가 너무 튀지 않게 조정 */
+}
