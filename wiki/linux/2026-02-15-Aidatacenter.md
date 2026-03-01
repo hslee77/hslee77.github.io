@@ -6,7 +6,8 @@ categories: [리눅스, AI데이타센터, 성능]
 ---
 [1. 트렌드의 변화 : 시장은 지금 어떻게 변화하고 있나?](#1-트렌트의-변화) <br>
 [2. 대용량 데이타의 고속 전송 : HBM 메모리는 어떻게 동작하나?](#2-hbm-메모리는-어떻게-동작하나)<br>
-[3. 리눅스에서 HBM 메모리로 Tiering 하는 방법 : Hot data 배열하기](#3-리눅스에서-가장-빠른-hbm-노드로-티어링)
+[3. 리눅스에서 HBM 메모리로 Tiering 하는 방법 : Hot data 배열하기](#3-리눅스에서-가장-빠른-hbm-노드로-티어링)<br>
+[4. HBM 포화 시 자동 완화 정책 설계 : 'Memory Pressure' 대응하기](#4-hbm-포화-시-자동-완화-정책-설계)
 
 
 ### 1. 트렌트의 변화
@@ -134,3 +135,80 @@ HBM hit 비율이 올라가면 성공
 - `numa_interleave`
 
 ----------
+
+### 4. HBM 포화 시 자동 완화 정책 설계
+
+<img src="/img/aitech/20260228_AUTOMATION.png" alt="screenshot" align=left width="800"/>
+<div style="clear:both;"></div>
+
+- 핵심은 단순히 **`메모리가 부족하면 프로세스를 죽인다(OOM Killer)`** 는 식의 대응이 아니라, **`계층화된 대응(Level 0~3)`**과 **`성능 지표(p99, Migration Fail)`**를 연동함으로써 HBM 메모리와 점유율과 관련된 관찰 가능성 (Observability)이 자동화 정책 핵심
+
+### **1.HBM 포화가 위험한 이유: 연쇄 장애의 메커니즘**
+
+- **HBM Free 급감:** 새로운 핫 페이지(Hot Page)를 올릴 공간이 고갈됨.
+- **Page Migration 실패:** DDR에 있는 데이터를 HBM으로 승격시키려는 시도가 **`실패(pgmigrate_fail 증가)`**
+- **Remote Access 폭증:** HBM에 들어가지 못한 데이터가 DDR에 머물며 CPU/GPU가 멀리 있는 데이터를 읽어오게 되고(**`numa_miss`**), 결과적으로 **p99 지연 시간**이 폭증.
+
+### **2.감지 신호(Trigger) 설계: "무엇을 볼 것인가?"**
+
+HBM 포화 상태를 정밀하게 감지하기 위해 관리자가 반드시 추적해야 할 4가지 핵심 지표군입니다.
+
+| 구분 | 지표명 | 임계치 (예시) | 의미 및 영향 |
+| :--- | :--- | :--- | :--- |
+| **용량** | `MemFree` / `MemUsed` | **WARN:** 85% / **CRIT:** 92% | HBM의 물리적 여유 공간 및 고갈 여부 |
+| **효율** | `pgmigrate_fail` | 1분간 지속 상승 시 | 계층 간(HBM↔DDR) 메모리 이동의 병목 현상 |
+| **성능** | `numa_miss` / `numa_hit` | Baseline 대비 Miss 급증 | 원격 메모리(DDR) 참조로 인한 처리 속도 저하 |
+| **체감** | `p99 Latency` | Baseline 대비 +30% 지속 | 실제 사용자가 느끼는 서비스 품질 및 응답 저하 |
+
+
+### **3.자동 완화 정책의 4단계 (Level 0 ~ 3)**
+
+<details class="custom-details">
+  <summary>Level 0: 정상 (Prevent)</summary>
+  <div class="details-content" style="padding: 15px; line-height: 1.8;">
+    • <span class="txt-bg-gray">정책:</span>  <code>numactl --membind=&lt;HBM_NODE&gt;</code>으로HBM을 우선 사용하되 부족하면 DDR로 자연스럽게 배치.<br>
+    • <span class="txt-bg-gray">주의:</span> <strong>hard bind</strong>는 절대 금물.HBM은 용량이 작기 때문에 꽉 차는 순간 프로세스가 즉사(OOM).<br>
+    • <span class="txt-bg-gray">핵심:</span> CPU와 HBM 노드의 Affinity를 유지하며 백그라운드 작업은 처음부터 DDR에 배치.
+  </div>
+</details>
+
+<details class="custom-details">
+  <summary>Level 1: 경고 (Soft Throttle)</summary>
+  <div class="details-content" style="padding: 15px; line-height: 1.8;">
+    • <span class="txt-bg-gray">트리거:</span> HBM 사용률 <strong>85%</strong> 돌입<br>
+    • <span class="txt-bg-gray">조치:</span> 새로 시작되는 <strong>비핵심 작업(배치, 로그 압축, 인덱싱 등)</strong>을 강제로 DDR 노드에 배치.<br>
+    • <span class="txt-bg-gray">예제:</span> 실행 래퍼에서 <code>numactl --membind=&lt;DDR_node&gt;</code> 적용.<br>
+    • <span class="txt-bg-gray">격리:</span> 해당 노드를 <strong>'Degraded'</strong>로 마킹하여 스케줄러가 새 워크로드를 배치하지 못하게.<br>
+    • <span class="txt-bg-gray">목표:</span> HBM의 추가 소모를 억제하여 핫셋(Hot-set) 공간을 보호합니다.
+  </div>
+</details>
+
+<details class="custom-details">
+  <summary>Level 2: 위험 (Workload Shedding)</summary>
+  <div class="details-content" style="padding: 15px; line-height: 1.8;">
+    • <span class="txt-bg-gray">트리거:</span> <strong>pgmigrate_fail</strong> 뚜렷한 증가, 서비스 지연 발생.<br>
+    • <span class="txt-bg-gray">조치:</span> 서빙 트래픽을 <strong>경량 모드</strong>로 전환하여 메모리 점유를 줄여줌.<br>
+        • <span class="txt-bg-gray">LLM 기준:</span> Max Context Length 제한, Batch Size 축소.<br>
+        • <span class="txt-bg-gray">Admission Control:</span> 세션/테넌트별 HBM Quota를 적용해 특정 유저의 독점을 방지.<br>
+    • <span class="txt-bg-gray">목표:</span> 핵심 모델과 KV Cache를 보호하고 나머지를 희생하여 가용성을 유지.
+  </div>
+</details>
+
+<details class="custom-details">
+  <summary>Level 3: 임계 (Fail-safe)</summary>
+  <div class="details-content" style="padding: 15px; line-height: 1.8;">
+    • <span class="txt-bg-gray">트리거:</span> p99 폭증, 스루풋 급락, Migration 실패 지속.<br>
+    • <span class="txt-bg-gray">조치:</span> 서비스 안정성을 위해 강도 높은 물리적 제어를 실행.<br>
+        • <span class="txt-bg-gray">드레인(Drain):</span> 일부 모델이나 테넌트를 강제 축소하거나 요청을 차단.<br>
+        • <span class="txt-bg-gray">격리:</span> 해당 노드를 'Degraded'로 마킹하여 스케줄러가 새 워크로드를 배치하지 못하게 함.<br>
+    • <span class="txt-bg-gray">재시작:</span> 누적된 파편화(Fragmentation) 해결을 위해 프로세스 롤링 재배치를 수행.
+  </div>
+</details>
+
+### **4. 실무자를 위한 체크리스트**
+
+- 100%를 다 쓰려 하지 말고, 항상 10~15%의 여유를 두어야 핫 페이지가 들어올 문이 열립니다.<br>
+[ ] **numastat -m**을 통해 노드별 메모리 상태를 주기적으로 로깅하고 있는가?<br>
+[ ] 서비스의 **p99 지연 시간과 메모리 Migration 실패율**이 연동되어 알람이 오는가?<br>
+[ ] 비핵심 워크로드를 즉시 **DDR로 격리할 수 있는 스크립트가 준비**되었는가?<br>
+[ ] 애플리케이션 레벨(vLLM, TGI 등)에서 **KV Cache 크기**를 동적으로 조절할 수 있는가?<br>
