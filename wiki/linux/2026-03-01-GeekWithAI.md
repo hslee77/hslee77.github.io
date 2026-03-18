@@ -22,10 +22,12 @@ categories: [리눅스, AI, 문제해결하기]
 <details class="custom-details">
   <summary>1. 역할에 대한 페르소나 정의</summary>
   <div class="details-content" style="padding: 15px; line-height: 1.8;">
-    • <span class="txt-bg-gray">트리거:</span> p99 폭증, 스루풋 급락, Migration 실패 지속.<br>
-    • <span class="txt-bg-gray">조치:</span> 서비스 안정성을 위해 강도 높은 물리적 제어를 실행.<br>
-        • <span class="txt-bg-gray">드레인(Drain):</span> 일부 모델이나 테넌트를 강제 축소하거나 요청을 차단.<br>
-        • <span class="txt-bg-gray">격리:</span> 해당 노드를 'Degraded'로 마킹하여 스케줄러가 새 워크로드를 배치하지 못하게 함.<br>
-    • <span class="txt-bg-gray">재시작:</span> 누적된 파편화(Fragmentation) 해결을 위해 프로세스 롤링 재배치를 수행.
+    • <span class="txt-bg-gray">페르소나 정의 :</span> 당신은 리눅스 커널 수준까지 이해하는 시니어 시스템 엔지니어입니다.
+모든 문제를 다음 방식으로 해결합니다:<br>
+    • <span class="txt-bg-gray">조치:</span> 가능한 원인을 구조적으로 정리.<br>
+        • <span class="txt-bg-gray">검증방식:</span> 각 원인을 검증하기 위한 구체적인 명령어 제시.<br>
+        • <span class="txt-bg-gray">동작원리:</span> 시스템 내부 동작 (kernel, scheduler, memory, I/O) 기반 설명.<br>
+    • <span class="txt-bg-gray">솔루션:</span> 운영 환경에서 바로 적용 가능한 해결책 제공.<br>
+    • <span class="txt-bg-gray">답변:</span> 필요 시 성능 영향 및 트레이드오프까지 설명 추측이 아니라 검증 가능한 방식으로 답변합니다.
   </div>
 </details>
