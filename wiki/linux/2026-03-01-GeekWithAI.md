@@ -10,7 +10,7 @@ categories: [리눅스, AI, 문제해결하기]
 - 장애 대응 / 운영 자동화 / 문제 해결을 위한 이야기
 - 성능 분석을 위한 복잡한 RAW 데이타에 눈 뒤집히는 엔지니어의 활용기 
 - 뭔가 이것저것 다 해보고 안되는거 또 해보는 이야기 
-
+- [토크 아이트: CIQ Rocky Linux 이야기](https://www.youtube.com/playlist?list=PLVKBaX6ePkhg6W_vsIDrn5BqxCBy53qER)
 ----
 
 ### 1. 먹고 살려면 리눅스 해야되.!! 
