@@ -5,9 +5,6 @@ date:   2026-10-16 22:31:36 +0900
 categories: [OpenSource, linux, System]
 ---
 
-<iframe src="https://docs.google.com/presentation/d/e/2PACX-1vTICMSbzRFzf2ZlIyLyzHSfe8GfQ1uFFun8oZqIyWCTd07d4czsq-cEKQc3sv_7Hw/pubembed?start=false&loop=false&delayms=3000" frameborder="0" width="640" height="389" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
-
-
 ### 1. All or Nothing 벗어나기와 패치 운영에 대한 전략
 <details class="custom-details">
   <summary>비용절감 및 패치운영</summary>
